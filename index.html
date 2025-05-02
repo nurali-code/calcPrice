@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Калькулятор 20%</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        label,
+        input,
+        button,
+        p {
+            font-size: 16px;
+        }
+
+        input {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            height: 40px;
+            width: 350px;
+            background-color: #2d2d2d;
+            color: #ffffff;
+            margin: 30px 0 10px;
+        }
+
+        button {
+            padding: 20px 30px;
+            border-radius: 6px;
+            min-width: 350px;
+            border: none;
+            background-color: #10a37f;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0e8c6a;
+        }
+
+        p {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Калькулятор: Обратные 20%</h2>
+    <label for="finalValue">Введите итоговое значение (после вычета 20%):</label>
+    <input type="number" id="finalValue" placeholder="Например, 3200">
+    <button onclick="calculateOriginal()">Рассчитать</button>
+    <p id="result"></p>
+
+    <script>
+        async function calculateFromClipboard() {
+            const resultEl = document.getElementById("result");
+
+            try {
+                const rawText = await navigator.clipboard.readText();
+
+                // Удаление всего кроме цифр, точки и запятой
+                let cleaned = rawText.replace(/[^\d.,]/g, "");
+
+                // Если есть и запятая, и точка — оставить только одну
+                if (cleaned.includes(",") && cleaned.includes(".")) {
+                    // Удалим запятую, если точка используется как десятичный разделитель
+                    cleaned = cleaned.replace(/,/g, "");
+                } else {
+                    // Заменим запятую на точку (если есть)
+                    cleaned = cleaned.replace(",", ".");
+                }
+
+                const value = parseFloat(cleaned);
+
+                if (isNaN(value)) {
+                    resultEl.textContent = `Буфер не содержит корректное число:\n"${rawText}"`;
+                    return;
+                }
+
+                const originalValue = value / 0.8;
+                resultEl.innerHTML = `<h1>${originalValue.toFixed(0)}₽</h1>`;
+            } catch (err) {
+                resultEl.textContent =
+                    "Ошибка доступа к буферу обмена. Разрешите доступ или используйте HTTPS.";
+            }
+        }
+
+        document.body.addEventListener("click", calculateFromClipboard);
+    </script>
+</body>
+
+</html>
